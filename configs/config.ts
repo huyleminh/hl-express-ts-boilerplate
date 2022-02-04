@@ -11,5 +11,3 @@ export class AppConfigs {
         return process.env.PORT ? +process.env.PORT : 5000;
     }
 }
-
-export class DBConfigs {}

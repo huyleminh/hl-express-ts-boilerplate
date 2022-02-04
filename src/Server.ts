@@ -1,9 +1,12 @@
 import * as cors from "cors";
 import * as express from "express";
+import helmet from "helmet";
+import * as morgan from "morgan";
 import { AppConfigs } from "../configs/config";
 import ControllerList from "./controllers";
 import AppController from "./controllers/AppController";
 import AppResponse from "./shared/AppResponse";
+import { AppLogStream, Logger } from "./utils/Logger";
 
 export default class Server {
     private _app: express.Application;
@@ -17,6 +20,7 @@ export default class Server {
     initializeGlobalMiddlewares() {
         this._app.use(express.json()); // parsing application/json
         this._app.use(express.urlencoded({ extended: true }));
+        this._app.use(helmet());
         this._app.use(
             cors({
                 origin: AppConfigs.AUTH_CLIENT_URL,
@@ -29,6 +33,12 @@ export default class Server {
                     "Accept",
                     "Authorization",
                 ],
+            })
+        );
+
+        this._app.use(
+            morgan("combined", {
+                stream: new AppLogStream(),
             })
         );
     }
@@ -57,7 +67,7 @@ export default class Server {
         this.initializeControllers();
         this.initializeErrorHandlerMiddlewares();
         this._app.listen(this.PORT, () => {
-            console.log(`Server is listening on http://localhost:${this.PORT}`);
+            Logger.info(`Server is listening on http://localhost:${this.PORT}`);
         });
     }
 }
