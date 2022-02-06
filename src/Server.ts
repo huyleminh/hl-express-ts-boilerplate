@@ -5,6 +5,7 @@ import * as morgan from "morgan";
 import { AppConfigs } from "../configs/config";
 import ControllerList from "./controllers";
 import AppController from "./controllers/AppController";
+import { IAppNextFuction, IAppRequest, IAppResponse } from "./interfaces/base/AppBase";
 import AppResponse from "./shared/AppResponse";
 import { AppLogStream, Logger } from "./utils/Logger";
 
@@ -14,7 +15,7 @@ export default class Server {
 
     constructor() {
         this._app = express();
-        this.PORT = 5000;
+        this.PORT = AppConfigs.PORT;
     }
 
     initializeGlobalMiddlewares() {
@@ -50,16 +51,14 @@ export default class Server {
     }
 
     initializeErrorHandlerMiddlewares() {
-        this._app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+        this._app.use((req: IAppRequest, res: IAppResponse, next: IAppNextFuction) => {
             new AppResponse(res).sendNotFound();
         });
 
-        this._app.use(
-            (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-                console.log(err);
-                new AppResponse(res).sendInternalError();
-            }
-        );
+        this._app.use((err: any, req: IAppRequest, res: IAppResponse, next: IAppNextFuction) => {
+            console.log(err);
+            new AppResponse(res).sendInternalError();
+        });
     }
 
     start() {
@@ -67,7 +66,7 @@ export default class Server {
         this.initializeControllers();
         this.initializeErrorHandlerMiddlewares();
         this._app.listen(this.PORT, () => {
-            Logger.info(`Server is listening on http://localhost:${this.PORT}`);
+            Logger.info(`Server is listening on ${AppConfigs.APP_URL}:${this.PORT}`);
         });
     }
 }

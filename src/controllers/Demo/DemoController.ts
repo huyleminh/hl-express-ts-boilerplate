@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { IAppRequest, IAppResponse } from "../../interfaces/base/AppBase";
 import AppResponse from "../../shared/AppResponse";
 import AppController from "../AppController";
 
@@ -11,7 +11,7 @@ export default class DemoController extends AppController {
         this._router.get("/", this.handleDemo);
     }
 
-    handleDemo(req: Request, res: Response): void {
+    handleDemo(req: IAppRequest, res: IAppResponse): void {
         new AppResponse(res).message("Hello").send();
     }
 }
