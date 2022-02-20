@@ -12,6 +12,6 @@ export default class DemoController extends AppController {
     }
 
     handleDemo(req: IAppRequest, res: IAppResponse): void {
-        new AppResponse(res).message("Hello").send();
+        new AppResponse(res).send();
     }
 }

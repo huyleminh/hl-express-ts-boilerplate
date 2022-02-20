@@ -6,8 +6,18 @@ export default class AppResponse {
     private _data: any;
     private _message?: string;
 
-    constructor(res: Response) {
+    /**
+     *
+     * @param res
+     * @param statusCode
+     * @param message
+     * @param data
+     */
+    constructor(res: Response, statusCode?: number, message?: string, data?: any) {
         this._res = res;
+        this._statusCode = statusCode ? statusCode : 200;
+        this._message = message;
+        this._data = data;
     }
 
     public statusCode(code: number): this {

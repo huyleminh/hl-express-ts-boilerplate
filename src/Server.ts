@@ -25,6 +25,9 @@ export default class Server {
         this._app.use(
             cors({
                 origin: AppConfigs.AUTH_CLIENT_URL,
+                // origin: function (origin, callback) {
+                //     callback(null, true);
+                // },
                 credentials: true,
                 methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
                 allowedHeaders: [
