@@ -2,11 +2,10 @@ import * as cors from "cors";
 import * as express from "express";
 import helmet from "helmet";
 import * as morgan from "morgan";
-import { AppConfigs } from "../configs/config";
+import Config from "../configs/config";
 import ControllerList from "./controllers";
 import AppController from "./controllers/AppController";
-import { IAppNextFuction, IAppRequest, IAppResponse } from "./interfaces/base/AppBase";
-import AppResponse from "./shared/AppResponse";
+import { IAppNextFuction, IAppRequest, IAppResponse } from "./interfaces/IBaseInterfaces";
 import { AppLogStream, Logger } from "./utils/Logger";
 
 export default class Server {
@@ -15,19 +14,16 @@ export default class Server {
 
     constructor() {
         this._app = express();
-        this.PORT = AppConfigs.PORT;
+        this.PORT = Config.APP.PORT;
     }
 
-    initializeGlobalMiddlewares() {
+    private initializeGlobalMiddlewares() {
         this._app.use(express.json()); // parsing application/json
         this._app.use(express.urlencoded({ extended: true }));
         this._app.use(helmet());
         this._app.use(
             cors({
-                origin: AppConfigs.AUTH_CLIENT_URL,
-                // origin: function (origin, callback) {
-                //     callback(null, true);
-                // },
+                origin: Config.APP.AUTH_CLIENT_URLS,
                 credentials: true,
                 methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
                 allowedHeaders: [
@@ -47,29 +43,29 @@ export default class Server {
         );
     }
 
-    initializeControllers() {
+    private initializeControllers() {
         ControllerList.forEach((controller: AppController) => {
             this._app.use("/", controller.router);
         });
     }
 
-    initializeErrorHandlerMiddlewares() {
+    private initializeErrorHandlerMiddlewares() {
         this._app.use((req: IAppRequest, res: IAppResponse, next: IAppNextFuction) => {
-            new AppResponse(res).sendNotFound();
+            res.status(404).send();
         });
 
         this._app.use((err: any, req: IAppRequest, res: IAppResponse, next: IAppNextFuction) => {
-            console.log(err);
-            new AppResponse(res).sendInternalError();
+            Logger.error(err);
+            res.status(500).send();
         });
     }
 
-    start() {
+    public start() {
         this.initializeGlobalMiddlewares();
         this.initializeControllers();
         this.initializeErrorHandlerMiddlewares();
         this._app.listen(this.PORT, () => {
-            Logger.info(`Server is listening on ${AppConfigs.APP_URL}:${this.PORT}`);
+            Logger.info(`Server is listening on ${this.PORT}`);
         });
     }
 }

@@ -1,4 +1,4 @@
-import { IAppRequest, IAppResponse } from "../../interfaces/base/AppBase";
+import { IAppRequest, IAppResponse } from "../../interfaces/IBaseInterfaces";
 import AppResponse from "../../shared/AppResponse";
 import AppController from "../AppController";
 
