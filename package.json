@@ -6,10 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "npm run build && node dist/src/index.js",
+    "start": "node ./dist/src/index.js",
     "postinstall": "tsc",
-    "prod": "npm run build && node -r dotenv/config dist/src/index.js dotenv_config_path=./.env",
-    "local": "nodemon -r dotenv/config src/index.ts dotenv_config_path=./.env.local"
+    "prod": "npm run build && node -r dotenv/config ./dist/src/index.js dotenv_config_path=./.env",
+    "local": "nodemon -r dotenv/config ./src/index.ts dotenv_config_path=./.env.local"
   },
   "keywords": [
     "typescript",
